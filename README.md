@@ -55,11 +55,19 @@ Follow these steps to set up and run the application on your local machine:
 2. **Select Feeds**: Each player can choose a price feed from the dropdown menu.
 3. **Play**: Click the "Play" button to compare the selected price feeds and determine the winner.
 
+
+
+## ⚠️ **Error Handling**
+
+> **Note:** If you encounter any errors while fetching price data, it could be due to an issue with the Chainlink address provided by the plugin. Ensure that the Chainlink price feeds are available and correctly configured in your environment.
+
+
 ## 🌟 **Visuals**
 
 Here's a preview of the application:
-
-![App Preview](./public/app-preview.png) 
+|||
+|:--:|:--:|
+|![App Preview](https://github.com/user-attachments/assets/72411a63-43d3-42b3-bbeb-cc5b02f380a3)|![App Preview](https://github.com/user-attachments/assets/ea6ef1ac-1013-4549-8545-8ae0fc18da0c)|
 
 ## 📜 **License**
 
@@ -76,17 +84,3 @@ For any questions or suggestions, please reach out to [dak.boniface@gmail.com](m
 ---
 
 Happy coding! 🚀
-
-
-### Key Sections Explained:
-
-1. **Project Idea**: Briefly explains what the project does and its purpose.
-2. **Features**: Lists the core features of the application.
-3. **Getting Started**: Provides installation and setup instructions.
-4. **Usage**: Explains how to use the application once it's running.
-5. **Visuals**: You can add a preview image of the application here if you have one.
-6. **License**: Information about the project’s license.
-7. **Contributing**: Encourages others to contribute and explains how.
-8. **Contact**: Provides a way to get in touch for further questions or suggestions.
-
-Feel free to customize this `README.md` according to your project's specifics and any additional details you want to include!
