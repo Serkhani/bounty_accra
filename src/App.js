@@ -1,51 +1,72 @@
-import logo from "./logo.svg";
+// import logo from "./logo.svg";
 import "./App.css";
 import { Web3 } from "web3";
 import { ChainlinkPlugin, MainnetPriceFeeds } from "@chainsafe/web3-plugin-chainlink";
-import { useState } from "react";
+import React, { useState } from 'react';
+// import PlayersSelection from './components';
 
-function App() {
-  const [btcPrice, setBtcPrice] = useState("000");
-  const [ethPrice, setEthPrice] = useState("000");
+const web3 = new Web3(window.ethereum);
+web3.registerPlugin(new ChainlinkPlugin());
 
-  // Initialize RPC/injected provider
-  const web3 = new Web3(window.ethereum);
-
-  // Register the plugin
-  web3.registerPlugin(new ChainlinkPlugin());
-
-  async function getBTCPrice() {
-    // use plugin
-    //calling the plugin
-    const btcprice = await web3.chainlink.getPrice(MainnetPriceFeeds.BtcUsd);
-    //formating the variable
-    const formattedPrice = btcprice.answer.toString().substring(0, 5);
-    //updating front end
-    setBtcPrice(formattedPrice);
-  }
-
-  async function getETHPrice() {
-    // use plugin
-    //calling the plugin
-    const ethPrice = await web3.chainlink.getPrice(MainnetPriceFeeds.EthUsd);
-    //formating the variable
-    const formattedPrice = ethPrice.answer.toString().substring(0, 4);
-    //updating front end
-    setEthPrice(formattedPrice);
-  }
-
+const FeedSelector = ({ player, selectedFeed, onSelectFeed }) => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <button onClick={getBTCPrice}>Get BTC Price</button>
-        <p>BTC price is: {btcPrice} </p>
-
-        <button onClick={getETHPrice}>Get ETH Price</button>
-        <p>ETH price is: {ethPrice} </p>
-      </header>
-    </div>
+      <div>
+          <h3>Player {player} Select Feed</h3>
+          <select 
+              value={selectedFeed} 
+              onChange={(e) => onSelectFeed(e.target.value)}
+          >
+              <option value="">Select a Feed</option>
+              {Object.keys(MainnetPriceFeeds).map((feedKey) => (
+                  <option key={feedKey} value={feedKey}>
+                      {feedKey}
+                  </option>
+              ))}
+          </select>
+      </div>
   );
+};
+
+const App = () => {
+  const [player1Feed, setPlayer1Feed] = useState('');
+  const [player2Feed, setPlayer2Feed] = useState('');
+async function findPrice(player1Feed,player2Feed) {
+  if (player1Feed&&player2Feed) {
+    
+    const player1Price = await web3.chainlink.getPrice(MainnetPriceFeeds[player1Feed]);
+    const player2Price = await web3.chainlink.getPrice(MainnetPriceFeeds[player2Feed]);
+    if (player1Price.answer > player2Price.answer) {
+      alert("Player 1 wins");
+    } else if (player1Price.answer < player2Price.answer) {
+      alert("Player 2 wins");
+    } else {
+      alert("It's a draw");
+    }
+  }
 }
+  return (
+      <div>
+          <h1>Mainnet Price Feeds Selector</h1>
+          <FeedSelector
+              player="1"
+              selectedFeed={player1Feed}
+              onSelectFeed={(feedKey) => setPlayer1Feed(feedKey)}
+          />
+          <FeedSelector
+              player="2"
+              selectedFeed={player2Feed}
+              onSelectFeed={(feedKey) => setPlayer2Feed(feedKey)}
+          />
+          <div>
+              <h2>Selected Feeds</h2>
+              <p>Player 1 Feed: {player1Feed ? MainnetPriceFeeds[player1Feed] : 'None'}</p>
+              <p>Player 2 Feed: {player2Feed ? MainnetPriceFeeds[player2Feed] : 'None'}</p>
+              <button onClick={ findPrice(player1Feed, player1Feed) }>
+                Play
+              </button>
+          </div>
+      </div>
+  );
+};
 
 export default App;
