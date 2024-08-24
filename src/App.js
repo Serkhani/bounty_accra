@@ -8,20 +8,20 @@ web3.registerPlugin(new ChainlinkPlugin());
 
 const FeedSelector = ({ player, selectedFeed, onSelectFeed }) => {
   return (
-      <div>
-          <h3>Player {player} Select Feed</h3>
-          <select 
-              value={selectedFeed} 
-              onChange={(e) => onSelectFeed(e.target.value)}
-          >
-              <option value="">Select a Feed</option>
-              {Object.keys(MainnetPriceFeeds).map((feedKey) => (
-                  <option key={feedKey} value={feedKey}>
-                      {feedKey}
-                  </option>
-              ))}
-          </select>
-      </div>
+    <div className="player">
+      <h3>Player {player} Feed Selector</h3>
+      <select 
+        value={selectedFeed} 
+        onChange={(e) => onSelectFeed(e.target.value)}
+      >
+        <option value="">Select a Feed</option>
+        {Object.keys(MainnetPriceFeeds).map((feedKey) => (
+          <option key={feedKey} value={feedKey}>
+            {feedKey}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 };
 
@@ -53,27 +53,29 @@ const App = () => {
   }
 
   return (
-      <div>
-          <h1>Mainnet Price Feeds Selector</h1>
-          <FeedSelector
-              player="1"
-              selectedFeed={player1Feed}
-              onSelectFeed={(feedKey) => setPlayer1Feed(feedKey)}
-          />
-          <FeedSelector
-              player="2"
-              selectedFeed={player2Feed}
-              onSelectFeed={(feedKey) => setPlayer2Feed(feedKey)}
-          />
-          <div>
-              <h2>Selected Feeds</h2>
-              <p>Player 1 Feed: {player1Feed ? MainnetPriceFeeds[player1Feed] : 'None'}</p>
-              <p>Player 2 Feed: {player2Feed ? MainnetPriceFeeds[player2Feed] : 'None'}</p>
-              <button onClick={findPrice}>
-                Play
-              </button>
-          </div>
+    <div className="App">
+      <header>Mainnet Price Feeds Selector</header>
+      <div className="container">
+        <FeedSelector
+          player="1"
+          selectedFeed={player1Feed}
+          onSelectFeed={(feedKey) => setPlayer1Feed(feedKey)}
+        />
+        <FeedSelector
+          player="2"
+          selectedFeed={player2Feed}
+          onSelectFeed={(feedKey) => setPlayer2Feed(feedKey)}
+        />
       </div>
+      <div className="result">
+        <h2>Selected Feeds</h2>
+        <p>Player 1 Feed: {player1Feed ? MainnetPriceFeeds[player1Feed] : 'None'}</p>
+        <p>Player 2 Feed: {player2Feed ? MainnetPriceFeeds[player2Feed] : 'None'}</p>
+        <button onClick={findPrice}>
+          Play
+        </button>
+      </div>
+    </div>
   );
 };
 
