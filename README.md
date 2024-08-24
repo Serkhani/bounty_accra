@@ -1,70 +1,92 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Mainnet Price Feeds Selector
 
-## Available Scripts
+Welcome to the **Mainnet Price Feeds Selector** project! This React application allows two players to select different Chainlink price feeds and compare their values. The player who selects the feed with the higher value wins. 
 
-In the project directory, you can run:
+## 🎯 **Project Idea**
 
-### `npm start`
+The **Mainnet Price Feeds Selector** is a fun and interactive application that leverages Chainlink's price feeds to create a simple competition between two players. By selecting different price feeds, players can compare real-time prices of various assets and determine a winner based on which feed has a higher value.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## ✨ **Features**
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **Feed Selection**: Each player can choose from a list of available Chainlink price feeds.
+- **Real-Time Comparison**: Fetch and compare the prices of the selected feeds.
+- **Result Display**: Get instant feedback on which player has the higher price or if it's a draw.
 
-### `npm test`
+## 🚀 **Getting Started**
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Follow these steps to set up and run the application on your local machine:
 
-### `npm run build`
+### Prerequisites
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Node.js (v20.x or later)
+- npm (v6.x or later) or yarn (optional)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Installation
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. **Clone the Repository**
 
-### `npm run eject`
+   ```bash
+   git clone https://github.com/your-username/mainnet-price-feeds-selector.git
+   cd mainnet-price-feeds-selector
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+2. **Install Dependencies**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+3. **Start the Application**
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+   ```bash
+   npm start
+   # or
+   yarn start
+   ```
 
-## Learn More
+   This will start the development server and open the application in your default web browser.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🛠️ **Usage**
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. **Open the Application**: You should see the main page with two sections for players to select price feeds.
+2. **Select Feeds**: Each player can choose a price feed from the dropdown menu.
+3. **Play**: Click the "Play" button to compare the selected price feeds and determine the winner.
 
-### Code Splitting
+## 🌟 **Visuals**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Here's a preview of the application:
 
-### Analyzing the Bundle Size
+![App Preview](./public/app-preview.png) 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 📜 **License**
 
-### Making a Progressive Web App
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 🙌 **Contributing**
 
-### Advanced Configuration
+Feel free to open issues or submit pull requests if you'd like to contribute to this project. Your contributions are always welcome!
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 📞 **Contact**
 
-### Deployment
+For any questions or suggestions, please reach out to [dak.boniface@gmail.com](mailto:your-email@example.com).
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+Happy coding! 🚀
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+### Key Sections Explained:
+
+1. **Project Idea**: Briefly explains what the project does and its purpose.
+2. **Features**: Lists the core features of the application.
+3. **Getting Started**: Provides installation and setup instructions.
+4. **Usage**: Explains how to use the application once it's running.
+5. **Visuals**: You can add a preview image of the application here if you have one.
+6. **License**: Information about the project’s license.
+7. **Contributing**: Encourages others to contribute and explains how.
+8. **Contact**: Provides a way to get in touch for further questions or suggestions.
+
+Feel free to customize this `README.md` according to your project's specifics and any additional details you want to include!
