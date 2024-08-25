@@ -116,7 +116,34 @@ var feedsThatWork = {
 }
 const web3 = new Web3(window.ethereum);
 web3.registerPlugin(new ChainlinkPlugin());
+const useMetaMask = () => {
+    const [isMetaMaskAvailable, setIsMetaMaskAvailable] = useState(false);
+    const [isMainnet, setIsMainnet] = useState(false);
 
+    useEffect(() => {
+        const checkMetaMask = async () => {
+            // Check for MetaMask availability
+            if (window.ethereum) {
+                setIsMetaMaskAvailable(true);
+
+                try {
+                    // Request chain ID from MetaMask
+                    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                    // Mainnet chain ID is '0x1'
+                    setIsMainnet(chainId === '0x1');
+                } catch (error) {
+                    console.error('Failed to get chain ID', error);
+                }
+            } else {
+                setIsMetaMaskAvailable(false);
+            }
+        };
+
+        checkMetaMask();
+    }, []);
+
+    return { isMetaMaskAvailable, isMainnet };
+};
 const FeedSelector = ({ player, selectedOptions, setSelectedOptions, initialPrices, finalPrices }) => {
 
     const handleSelectChange = (event) => {
@@ -177,7 +204,7 @@ const App = () => {
     const [initialPrices, setInitialPrices] = useState(null);
     const [finalPrices, setFinalPrices] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
-
+    const { isMetaMaskAvailable, isMainnet } = useMetaMask();
     // useEffect(() => {
     //     if (timer > 0 && isPlaying) {
     //         const interval = setInterval(() => {
@@ -285,6 +312,13 @@ const App = () => {
             <Toaster position="top-right" reverseOrder={false} />
             <div className="App">
                 <header>Chainlink Price Feed Game</header>
+                <div className="network-status">
+                {!isMetaMaskAvailable && <p>Please install MetaMask to use this application.</p>}
+                {isMetaMaskAvailable && !isMainnet && <p>You need to be connected to the Ethereum Mainnet.</p>}
+                {isMetaMaskAvailable && isMainnet && <p>Connected to Ethereum Mainnet.</p>}
+            </div>
+            {(!isMetaMaskAvailable || !isMainnet) && <p>Not Available.</p>}
+            {(isMetaMaskAvailable || isMainnet) && (<div className="App">
                 <div className="container">
                     <FeedSelector
                         player="1"
@@ -320,6 +354,8 @@ const App = () => {
                         <h3>Countdown: {timer} seconds</h3>
                     </div>
                 )}
+            </div>)}
+               
             </div>
         </>
     );

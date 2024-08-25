@@ -21,7 +21,7 @@ header {
 .container {
   display: flex;
   justify-content: space-around;
-  width: 80%;
+  width: 100%;
   margin-top: 20px;
 }
 
@@ -63,10 +63,39 @@ p {
   font-size: 18px;
   color: #555;
 }
+.network-status {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
+  z-index: 1000;
+}
+
+.network-status p {
+  margin: 0;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+
+.network-status.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.network-status.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
 
 .selected-option {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 equal divisions */
+  grid-template-columns: repeat(4, 1fr);
   justify-content: space-between;
   align-items: center;
   padding: 5px;
