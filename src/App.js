@@ -121,7 +121,7 @@ const FeedSelector = ({ player, selectedOptions, setSelectedOptions, initialPric
 
     const handleSelectChange = (event) => {
         const value = event.target.value;
-        if (value && selectedOptions.length < 10) {
+        if (value && selectedOptions.length < 5) {
             setSelectedOptions((prevSelected) => {
                 if (!prevSelected.includes(value)) {
                     return [...prevSelected, value];
@@ -138,7 +138,7 @@ const FeedSelector = ({ player, selectedOptions, setSelectedOptions, initialPric
     return (
         <div className="player">
             <h3>Player {player} Feed Selector</h3>
-            <select onChange={handleSelectChange} disabled={selectedOptions.length >= 10}>
+            <select onChange={handleSelectChange} disabled={selectedOptions.length >= 5}>
                 <option value="">Select a Feed</option>
                 {Object.keys(feedsThatWork).map((feedKey) => (
                     <option key={feedKey} value={feedKey}>
@@ -178,38 +178,56 @@ const App = () => {
     const [finalPrices, setFinalPrices] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
 
+    // useEffect(() => {
+    //     if (timer > 0 && isPlaying) {
+    //         const interval = setInterval(() => {
+    //             setTimer((prevTimer) => prevTimer - 1);
+    //         }, 1000);
+    //         return () => clearInterval(interval);
+    //     }
+    //     else if (timer === 0 && isPlaying) {
+    //         setTimer(waitingTime);
+    //         fetchFinalPrices();
+    //         clearImmediate();
+    //     }
+    // }, [timer, isPlaying]);
     useEffect(() => {
-        if (timer > 0 && isPlaying) {
+        if (isPlaying && timer > 0) {
             const interval = setInterval(() => {
-                setTimer((prevTimer) => prevTimer - 1);
+                setTimer(prevTimer => {
+                    if (prevTimer <= 1) {
+                        clearInterval(interval); // Clear the interval when timer reaches 0
+                        fetchFinalPrices(); // Fetch final prices and determine the winner
+                        return waitingTime; // Reset the timer for the next game
+                    }
+                    return prevTimer - 1;
+                });
             }, 1000);
-            return () => clearInterval(interval);
+            return () => clearInterval(interval); // Cleanup on component unmount
         }
-        else if (timer === 0 && isPlaying) {
-            setTimer(waitingTime);
-            fetchFinalPrices();
-            clearImmediate();
-        }
-    }, [timer, isPlaying]);
+    }, [timer, isPlaying, waitingTime]);
 
     const fetchPrices = async (feeds) => {
         console.log("feeds:", feeds)
         const prices = {};
         for (let feed of feeds) {
+            // var num = (await web3.chainlink.getPrice(feedsThatWork[feed]));
+
             prices[feed] = await web3.chainlink.getPrice(feedsThatWork[feed]);
+            // JSBI.divide(num, JSBI.BigInt(10 ** 18));
         }
         return prices;
     };
 
     const startGame = async () => {
         // TODO: change to 10
-        if (player1SelectedFeed.length === 1 && player2SelectedFeed.length === 1) {
+        if (player1SelectedFeed.length === 5 && player2SelectedFeed.length === 5) {
             setIsPlaying(true);
             const prices = await fetchPrices([...player1SelectedFeed, ...player2SelectedFeed]);
             setInitialPrices(prices);
             setTimer(waitingTime);
         } else {
-            toast.error('Each player must select 10 feeds.');
+            toast.error('Each player must select 5 feeds.');
         }
     };
 
@@ -230,26 +248,34 @@ const App = () => {
         
         player1SelectedFeed.forEach(feed => {
             console.log("pr1",initialPrices)
-            const initialPrice = initialPrices[feed].answer;
-            const finalPrice = prices[feed].answer
-            const change = JSBI.subtract(finalPrice, initialPrice);
+            console.log("pr1",initialPrices)
+            // const initialPrice = initialPrices[feed].answer;        
+            const initialPrice = JSBI.BigInt(initialPrices[feed].answer.toString());
+            // const finalPrice = prices[feed].answer        
+            const finalPrice = JSBI.BigInt(prices[feed].answer.toString());
+            var change = JSBI.subtract(finalPrice, initialPrice);
             player1Score = JSBI.add(player1Score, change);
         });
         
         player2SelectedFeed.forEach(feed => {
             console.log("pr2",initialPrices)
-            const initialPrice = initialPrices[feed].answer;
-            const finalPrice = prices[feed].answer
-            const change = JSBI.subtract(finalPrice, initialPrice);
+            // const initialPrice = initialPrices[feed].answer;
+            // const finalPrice = prices[feed].answer
+
+        const initialPrice = JSBI.BigInt(initialPrices[feed].answer.toString());
+        const finalPrice = JSBI.BigInt(prices[feed].answer.toString());
+            var change = JSBI.subtract(finalPrice, initialPrice);
+            console.log("change", change)
             player2Score = JSBI.add(player2Score, change);
+            
         });
-        console.log(player1Score, player2Score)
+        console.log(player1Score.toString(), player2Score.toString())
         if (JSBI.greaterThan(player1Score, player2Score)) {
-            toast.success("Player 1 wins!");
+            toast.success("Player 1 wins! Player 1 has a score of", player1Score.toString(), ' and Player 2 has a score of', player2Score.toString());
         } else if (JSBI.lessThan(player1Score, player2Score)) {
-            toast.success("Player 2 wins!");
+            toast.success("Player 2 wins! Player 1 has a score of", player1Score.toString(), ' and Player 2 has a score of', player2Score.toString());
         } else {
-            toast.error("It's a draw!");
+            toast.error("It's a draw! Player1 and Player2 both have a price difference of 0");
         }
     };
 

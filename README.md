@@ -2,11 +2,11 @@
 
 ## Overview
 
-The Chainlink Price Feed Game is a two-player game built using React and the Chainlink Plugin for Web3.js. In this game, each player selects a set of 10 cryptocurrency price feeds. After a waiting period, the game fetches the initial and final prices for the selected feeds, and the player with the highest positive change in price wins!
+The Chainlink Price Feed Game is a two-player game built using React and the Chainlink Plugin for Web3.js. In this game, each player selects a set of 5 cryptocurrency price feeds. After a waiting period, the game fetches the initial and final prices for the selected feeds, and the player with the highest positive change in price wins!
 
 ## Features
 
-- **Two-Player Gameplay**: Players select 10 price feeds each from a list of available feeds.
+- **Two-Player Gameplay**: Players select 5 price feeds each from a list of available feeds.
 - **Real-Time Price Fetching**: The game fetches live price data using Chainlink's decentralized oracles.
 - **Visual Display of Prices**: The initial and final prices of each selected feed are displayed to both players.
 - **Automatic Winner Determination**: The game calculates the total price change for each player and declares the winner.
@@ -43,7 +43,7 @@ The Chainlink Price Feed Game is a two-player game built using React and the Cha
 
 ### Usage
 
-1. **Selecting Feeds**: Each player selects 10 price feeds from the dropdown menu.
+1. **Selecting Feeds**: Each player selects 5 price feeds from the dropdown menu.
 2. **Setting Waiting Time**: You can set the waiting time (in seconds) before the final prices are fetched.
 3. **Start the Game**: Click the "Play" button to start the game. The initial prices will be fetched immediately.
 4. **Wait for Countdown**: The game will fetch the final prices after the countdown finishes.
@@ -88,4 +88,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Chainlink**: For providing reliable, decentralized oracles for fetching price data.
 - **React Community**: For the tools and libraries that made this project possible.
 
----
