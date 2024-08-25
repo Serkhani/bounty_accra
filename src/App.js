@@ -118,8 +118,6 @@ const web3 = new Web3(window.ethereum);
 web3.registerPlugin(new ChainlinkPlugin());
 
 const FeedSelector = ({ player, selectedOptions, setSelectedOptions, initialPrices, finalPrices }) => {
-    console.log("ini",initialPrices)
-    console.log("fi",finalPrices)
 
     const handleSelectChange = (event) => {
         const value = event.target.value;
@@ -229,17 +227,17 @@ const App = () => {
         let player2Score = JSBI.BigInt(0);
         console.log("initialPrices:", initialPrices);
         console.log("finalPrices:", finalPrices);
-        
+
         player1SelectedFeed.forEach(feed => {
-            console.log("pr1",initialPrices)
+            console.log("pr1", initialPrices)
             const initialPrice = initialPrices[feed].answer;
             const finalPrice = prices[feed].answer
             const change = JSBI.subtract(finalPrice, initialPrice);
             player1Score = JSBI.add(player1Score, change);
         });
-        
+
         player2SelectedFeed.forEach(feed => {
-            console.log("pr2",initialPrices)
+            console.log("pr2", initialPrices)
             const initialPrice = initialPrices[feed].answer;
             const finalPrice = prices[feed].answer
             const change = JSBI.subtract(finalPrice, initialPrice);
@@ -287,7 +285,7 @@ const App = () => {
                             min="1"
                         />
                     </label>
-                    <button className="play-button" onClick={()=>startGame()} disabled={isPlaying} color={isPlaying ? "grey" : "blue"}>
+                    <button className="play-button" onClick={() => startGame()} disabled={isPlaying} color={isPlaying ? "grey" : "blue"}>
                         Play
                     </button>
                 </div>
@@ -296,11 +294,6 @@ const App = () => {
                         <h3>Countdown: {timer} seconds</h3>
                     </div>
                 )}
-                <div className="result">
-                    <h2>Selected Feeds</h2>
-                    <p>Player 1 Feeds: {player1SelectedFeed.join(", ")}</p>
-                    <p>Player 2 Feeds: {player2SelectedFeed.join(", ")}</p>
-                </div>
             </div>
         </>
     );
@@ -309,6 +302,11 @@ const App = () => {
 export default App;
 
 
+{/* <div className="result">
+                    <h2>Selected Feeds</h2>
+                    <p>Player 1 Feeds: {player1SelectedFeed.join(", ")}</p>
+                    <p>Player 2 Feeds: {player2SelectedFeed.join(", ")}</p>
+                </div> */}
 
 
 

@@ -1,86 +1,91 @@
+# Chainlink Price Feed Game
 
-# Mainnet Price Feeds Selector
+## Overview
 
-Welcome to the **Mainnet Price Feeds Selector** project! This React application allows two players to select different Chainlink price feeds and compare their values. The player who selects the feed with the higher value wins. 
+The Chainlink Price Feed Game is a two-player game built using React and the Chainlink Plugin for Web3.js. In this game, each player selects a set of 10 cryptocurrency price feeds. After a waiting period, the game fetches the initial and final prices for the selected feeds, and the player with the highest positive change in price wins!
 
-## 🎯 **Project Idea**
+## Features
 
-The **Mainnet Price Feeds Selector** is a fun and interactive application that leverages Chainlink's price feeds to create a simple competition between two players. By selecting different price feeds, players can compare real-time prices of various assets and determine a winner based on which feed has a higher value.
+- **Two-Player Gameplay**: Players select 10 price feeds each from a list of available feeds.
+- **Real-Time Price Fetching**: The game fetches live price data using Chainlink's decentralized oracles.
+- **Visual Display of Prices**: The initial and final prices of each selected feed are displayed to both players.
+- **Automatic Winner Determination**: The game calculates the total price change for each player and declares the winner.
 
-## ✨ **Features**
-
-- **Feed Selection**: Each player can choose from a list of available Chainlink price feeds.
-- **Real-Time Comparison**: Fetch and compare the prices of the selected feeds.
-- **Result Display**: Get instant feedback on which player has the higher price or if it's a draw.
-
-## 🚀 **Getting Started**
-
-Follow these steps to set up and run the application on your local machine:
+## Getting Started
 
 ### Prerequisites
 
-- Node.js (v20.x or later)
-- npm (v6.x or later) or yarn (optional)
+- **Node.js**: Make sure you have Node.js installed. You can download it from [here](https://nodejs.org/).
+- **NPM**: NPM comes bundled with Node.js, but make sure it’s updated to the latest version.
 
 ### Installation
 
-1. **Clone the Repository**
+1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/your-username/mainnet-price-feeds-selector.git
-   cd mainnet-price-feeds-selector
-   ```
+    ```bash
+    git clone https://github.com/serkhani/bounty_accra.git
+    cd chainlink-price-feed-game
+    ```
 
-2. **Install Dependencies**
+2. Install the dependencies:
 
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
+    ```bash
+    npm install
+    ```
 
-3. **Start the Application**
+3. Start the development server:
 
-   ```bash
-   npm start
-   # or
-   yarn start
-   ```
+    ```bash
+    npm start
+    ```
 
-   This will start the development server and open the application in your default web browser.
+   The app will run on `http://localhost:3000`.
 
-## 🛠️ **Usage**
+### Usage
 
-1. **Open the Application**: You should see the main page with two sections for players to select price feeds.
-2. **Select Feeds**: Each player can choose a price feed from the dropdown menu.
-3. **Play**: Click the "Play" button to compare the selected price feeds and determine the winner.
+1. **Selecting Feeds**: Each player selects 10 price feeds from the dropdown menu.
+2. **Setting Waiting Time**: You can set the waiting time (in seconds) before the final prices are fetched.
+3. **Start the Game**: Click the "Play" button to start the game. The initial prices will be fetched immediately.
+4. **Wait for Countdown**: The game will fetch the final prices after the countdown finishes.
+5. **View Results**: The initial and final prices will be displayed, and the winner will be determined based on the highest positive change in price.
 
+## Technologies Used
 
+- **React**: For building the user interface.
+- **Web3.js**: To interact with the Ethereum blockchain.
+- **Chainlink Plugin for Web3.js**: To fetch live price data using Chainlink oracles.
+- **React Hot Toast**: For displaying game notifications and results.
+- **JSBI**: To handle large integer arithmetic for price calculations.
 
-## ⚠️ **Error Handling**
+## Code Overview
 
-> **Note:** If you encounter any errors while fetching price data, it could be due to an issue with the Chainlink address provided by the plugin. Ensure that the Chainlink price feeds are available and correctly configured in your environment.
+### Main Components
 
+- **`App.js`**: The main component that handles the game logic, including fetching prices, starting the game, and determining the winner.
+- **`FeedSelector.js`**: A component for selecting the price feeds for each player.
 
-## 🌟 **Visuals**
+### Key Functions
 
-Here's a preview of the application:
-|||
-|:--:|:--:|
-|![App Preview](https://github.com/user-attachments/assets/72411a63-43d3-42b3-bbeb-cc5b02f380a3)|![App Preview](https://github.com/user-attachments/assets/ea6ef1ac-1013-4549-8545-8ae0fc18da0c)|
+- **`fetchPrices(feeds)`**: Fetches the current prices for the selected feeds using the Chainlink plugin.
+- **`determineWinner(prices)`**: Compares the total price changes for both players and declares the winner.
 
-## 📜 **License**
+## Future Enhancements
 
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+- **Dynamic Feed Addition**: Allow players to add custom feeds dynamically.
+- **Leaderboard**: Implement a leaderboard to track the highest-scoring games.
+- **User Authentication**: Add user login and account management features.
 
-## 🙌 **Contributing**
+## Contributing
 
-Feel free to open issues or submit pull requests if you'd like to contribute to this project. Your contributions are always welcome!
+Contributions are welcome! Please fork the repository and create a pull request with your changes.
 
-## 📞 **Contact**
+## License
 
-For any questions or suggestions, please reach out to [dak.boniface@gmail.com](mailto:your-email@example.com).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- **Chainlink**: For providing reliable, decentralized oracles for fetching price data.
+- **React Community**: For the tools and libraries that made this project possible.
 
 ---
-
-Happy coding! 🚀
