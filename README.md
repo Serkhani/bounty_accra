@@ -75,6 +75,12 @@ The Chainlink Price Feed Game is a two-player game built using React and the Cha
 - **Leaderboard**: Implement a leaderboard to track the highest-scoring games.
 - **User Authentication**: Add user login and account management features.
 
+|1. **Players Draw** 📊|3. **Player Wins** 🍃|5. **MetaMask Wallet** 🚕|
+|:---:|:---:|:---:|
+|A red toast pops up when the players draw|When a player wins, theres is a green toast|When there is no metamask account or the wallet is not connected to mainnet|
+|![Players Draw](https://github.com/user-attachments/assets/3d85edc4-283d-4d48-9a83-dd9e12e6feed)|![Player Wins](https://github.com/user-attachments/assets/0e4bcf5a-a817-4ceb-8627-eaa20e573985)|![MetaMask NA](https://github.com/user-attachments/assets/f5c3d057-98b6-4e1f-b9e8-ede737a1625b)|
+
+
 ## Contributing
 
 Contributions are welcome! Please fork the repository and create a pull request with your changes.
