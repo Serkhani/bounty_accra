@@ -1,6 +1,6 @@
 import "./App.css";
 import Web3 from "web3";
-import { ChainlinkPlugin, MainnetPriceFeeds } from "@chainsafe/web3-plugin-chainlink";
+import { ChainlinkPlugin } from "@chainsafe/web3-plugin-chainlink";
 import React, { useState, useEffect } from 'react';
 import { Toaster, toast } from "react-hot-toast";
 import JSBI from 'jsbi';
@@ -187,8 +187,8 @@ const FeedSelector = ({ player, selectedOptions, setSelectedOptions, initialPric
                     <div key={option} className="selected-option">
                         <button onClick={() => handleRemoveOption(option)}><span>X</span></button>
                         <span>{option}</span>
-                        {initialPrices && initialPrices[option]&& <span>${initialPrices[option].answer.toString()}</span>}
-                        {finalPrices && finalPrices[option]&& <span>${finalPrices[option].answer.toString()}</span>}
+                        {initialPrices && initialPrices[option] && <span>${initialPrices[option].answer.toString()}</span>}
+                        {finalPrices && finalPrices[option] && <span>${finalPrices[option].answer.toString()}</span>}
                     </div>
                 ))}
             </div>
@@ -201,57 +201,72 @@ const App = () => {
     const [player2SelectedFeed, setPlayer2SelectedFeed] = useState([]);
     const [waitingTime, setWaitingTime] = useState(2);
     const [timer, setTimer] = useState(waitingTime);
-    const [initialPrices, setInitialPrices] = useState(null);
-    const [finalPrices, setFinalPrices] = useState(null);
+    const [initialPrices, setInitialPrices] = useState({});
+    const [finalPrices, setFinalPrices] = useState({});
     const [isPlaying, setIsPlaying] = useState(false);
     const { isMetaMaskAvailable, isMainnet } = useMetaMask();
-    // useEffect(() => {
-    //     if (timer > 0 && isPlaying) {
-    //         const interval = setInterval(() => {
-    //             setTimer((prevTimer) => prevTimer - 1);
-    //         }, 1000);
-    //         return () => clearInterval(interval);
-    //     }
-    //     else if (timer === 0 && isPlaying) {
-    //         setTimer(waitingTime);
-    //         fetchFinalPrices();
-    //         clearImmediate();
-    //     }
-    // }, [timer, isPlaying]);
-    useEffect(() => {
-        if (isPlaying && timer > 0) {
-            const interval = setInterval(() => {
-                setTimer(prevTimer => {
-                    if (prevTimer <= 1) {
-                        clearInterval(interval); // Clear the interval when timer reaches 0
-                        fetchFinalPrices(); // Fetch final prices and determine the winner
-                        return waitingTime; // Reset the timer for the next game
-                    }
-                    return prevTimer - 1;
-                });
-            }, 1000);
-            return () => clearInterval(interval); // Cleanup on component unmount
-        }
-    }, [timer, isPlaying, waitingTime]);
 
     const fetchPrices = async (feeds) => {
-        console.log("feeds:", feeds)
+        console.log("feeds:", feeds);
         const prices = {};
         for (let feed of feeds) {
-            // var num = (await web3.chainlink.getPrice(feedsThatWork[feed]));
-
-            prices[feed] = await web3.chainlink.getPrice(feedsThatWork[feed]);
-            // JSBI.divide(num, JSBI.BigInt(10 ** 18));
+            try {
+                const price = await web3.chainlink.getPrice(feedsThatWork[feed]);
+                prices[feed] = price;
+            } catch (error) {
+                console.error(`Failed to fetch price for feed ${feed}:`, error);
+                prices[feed] = null; // Or handle the error accordingly
+            }
         }
+        console.log("prices:", prices);
         return prices;
     };
 
+    const fetchFinalPrices = async () => {
+        await fetchPrices([...player1SelectedFeed, ...player2SelectedFeed]).then((prices) => {
+            console.log(prices)
+            setFinalPrices(prices)
+            determineWinner(prices);
+            setIsPlaying(false);
+        }
+        );
+    };
+    useEffect(() => {
+        if (timer > 0 && isPlaying) {
+            const interval = setInterval(() => {
+                setTimer((prevTimer) => prevTimer - 1);
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+        else if (timer === 0 && isPlaying) {
+            setTimer(waitingTime);
+            fetchFinalPrices();
+            clearImmediate();
+        }
+    }, [timer, isPlaying]);
+    // useEffect(() => {
+    //     if (isPlaying && timer > 0) {
+    //         const interval = setInterval(() => {
+    //             setTimer(prevTimer => {
+    //                 if (prevTimer <= 1) {
+    //                     clearInterval(interval); // Clear the interval when timer reaches 0
+    //                     fetchFinalPrices(); // Fetch final prices and determine the winner
+    //                     return waitingTime; // Reset the timer for the next game
+    //                 }
+    //                 return prevTimer - 1;
+    //             });
+    //         }, 1000);
+    //         return () => clearInterval(interval); // Cleanup on component unmount
+    //     }
+    // }, [timer, isPlaying, waitingTime]);
+
+
     const startGame = async () => {
-        // TODO: change to 10
         if (player1SelectedFeed.length === 5 && player2SelectedFeed.length === 5) {
             setIsPlaying(true);
             const prices = await fetchPrices([...player1SelectedFeed, ...player2SelectedFeed]);
             setInitialPrices(prices);
+            console.log("ini", initialPrices)
             setTimer(waitingTime);
         } else {
             toast.error('Each player must select 5 feeds.');
@@ -259,42 +274,30 @@ const App = () => {
     };
 
 
-    const fetchFinalPrices = async () => {
-        const prices = await fetchPrices([...player1SelectedFeed, ...player2SelectedFeed]);
-        setFinalPrices(prices);
-        determineWinner(prices);
-        setIsPlaying(false);
-    };
 
 
-    const determineWinner = (prices) => {
+
+    const determineWinner = async (prices) => {
         let player1Score = JSBI.BigInt(0);
         let player2Score = JSBI.BigInt(0);
         console.log("initialPrices:", initialPrices);
         console.log("finalPrices:", finalPrices);
-        
+
         player1SelectedFeed.forEach(feed => {
-            console.log("pr1",initialPrices)
-            console.log("pr1",initialPrices)
-            // const initialPrice = initialPrices[feed].answer;        
-            const initialPrice = JSBI.BigInt(initialPrices[feed].answer.toString());
-            // const finalPrice = prices[feed].answer        
-            const finalPrice = JSBI.BigInt(prices[feed].answer.toString());
+            const initialPrice = initialPrices[feed]?.answer ? JSBI.BigInt(initialPrices[feed].answer.toString()) : JSBI.BigInt(0);
+            const finalPrice = prices[feed]?.answer ? JSBI.BigInt(prices[feed].answer.toString()) : JSBI.BigInt(0);
             var change = JSBI.subtract(finalPrice, initialPrice);
             player1Score = JSBI.add(player1Score, change);
         });
-        
-        player2SelectedFeed.forEach(feed => {
-            console.log("pr2",initialPrices)
-            // const initialPrice = initialPrices[feed].answer;
-            // const finalPrice = prices[feed].answer
 
-        const initialPrice = JSBI.BigInt(initialPrices[feed].answer.toString());
-        const finalPrice = JSBI.BigInt(prices[feed].answer.toString());
+        player2SelectedFeed.forEach(feed => {
+            console.log("pr2", initialPrices)
+            const initialPrice = initialPrices[feed]?.answer ? JSBI.BigInt(initialPrices[feed].answer.toString()) : JSBI.BigInt(0);
+            const finalPrice = prices[feed]?.answer ? JSBI.BigInt(prices[feed].answer.toString()) : JSBI.BigInt(0);
+
             var change = JSBI.subtract(finalPrice, initialPrice);
-            console.log("change", change)
             player2Score = JSBI.add(player2Score, change);
-            
+
         });
         console.log(player1Score.toString(), player2Score.toString())
         if (JSBI.greaterThan(player1Score, player2Score)) {
@@ -302,7 +305,7 @@ const App = () => {
         } else if (JSBI.lessThan(player1Score, player2Score)) {
             toast.success("Player 2 wins! Player 1 has a score of", player1Score.toString(), ' and Player 2 has a score of', player2Score.toString());
         } else {
-            toast.error("It's a draw! Player1 and Player2 both have a price difference of 0");
+            toast.error("It's a draw! Player1 and Player2 both have a price difference of ", player2Score.toString());
         }
     };
 
@@ -313,49 +316,49 @@ const App = () => {
             <div className="App">
                 <header>Chainlink Price Feed Game</header>
                 <div className="network-status">
-                {!isMetaMaskAvailable && <p>Please install MetaMask to use this application.</p>}
-                {isMetaMaskAvailable && !isMainnet && <p>You need to be connected to the Ethereum Mainnet.</p>}
-                {isMetaMaskAvailable && isMainnet && <p>Connected to Ethereum Mainnet.</p>}
-            </div>
-            {(!isMetaMaskAvailable || !isMainnet) && <p>Not Available.</p>}
-            {(isMetaMaskAvailable || isMainnet) && (<div className="App">
-                <div className="container">
-                    <FeedSelector
-                        player="1"
-                        initialPrices={initialPrices}
-                        finalPrices={finalPrices}
-                        selectedOptions={player1SelectedFeed}
-                        setSelectedOptions={setPlayer1SelectedFeed}
-                    />
-                    <FeedSelector
-                        player="2"
-                        initialPrices={initialPrices}
-                        finalPrices={finalPrices}
-                        selectedOptions={player2SelectedFeed}
-                        setSelectedOptions={setPlayer2SelectedFeed}
-                    />
+                    {!isMetaMaskAvailable && <p>Please install MetaMask to use this application.</p>}
+                    {isMetaMaskAvailable && !isMainnet && <p>You need to be connected to the Ethereum Mainnet.</p>}
+                    {isMetaMaskAvailable && isMainnet && <p>Connected to Ethereum Mainnet.</p>}
                 </div>
-                <div className="controls">
-                    <label>
-                        Select Waiting Time (seconds):
-                        <input
-                            type="number"
-                            value={waitingTime}
-                            onChange={(e) => setWaitingTime(e.target.value)}
-                            min="1"
+                {(!isMetaMaskAvailable || !isMainnet) && <p>Not Available.</p>}
+                {(isMetaMaskAvailable || isMainnet) && (<div className="App">
+                    <div className="container">
+                        <FeedSelector
+                            player="1"
+                            initialPrices={initialPrices}
+                            finalPrices={finalPrices}
+                            selectedOptions={player1SelectedFeed}
+                            setSelectedOptions={setPlayer1SelectedFeed}
                         />
-                    </label>
-                    <button className="play-button" onClick={()=>startGame()} disabled={isPlaying} color={isPlaying ? "grey" : "blue"}>
-                        Play
-                    </button>
-                </div>
-                {isPlaying && (
-                    <div className="countdown">
-                        <h3>Countdown: {timer} seconds</h3>
+                        <FeedSelector
+                            player="2"
+                            initialPrices={initialPrices}
+                            finalPrices={finalPrices}
+                            selectedOptions={player2SelectedFeed}
+                            setSelectedOptions={setPlayer2SelectedFeed}
+                        />
                     </div>
-                )}
-            </div>)}
-               
+                    <div className="controls">
+                        <label>
+                            Select Waiting Time (seconds):
+                            <input
+                                type="number"
+                                value={waitingTime}
+                                onChange={(e) => setWaitingTime(e.target.value)}
+                                min="1"
+                            />
+                        </label>
+                        <button className="play-button" onClick={() => startGame()} disabled={isPlaying} color={isPlaying ? "grey" : "blue"}>
+                            Play
+                        </button>
+                    </div>
+                    {isPlaying && (
+                        <div className="countdown">
+                            <h3>Countdown: {timer} seconds</h3>
+                        </div>
+                    )}
+                </div>)}
+
             </div>
         </>
     );
