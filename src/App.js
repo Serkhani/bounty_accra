@@ -160,8 +160,8 @@ const FeedSelector = ({ player, selectedOptions, setSelectedOptions, initialPric
                     <div key={option} className="selected-option">
                         <button onClick={() => handleRemoveOption(option)}><span>X</span></button>
                         <span>{option}</span>
-                        {initialPrices && <span>${initialPrices[option].answer.toString()}</span>}
-                        {finalPrices && <span>${finalPrices[option].answer.toString()}</span>}
+                        {initialPrices && initialPrices[option]&& <span>${initialPrices[option].answer.toString()}</span>}
+                        {finalPrices && finalPrices[option]&& <span>${finalPrices[option].answer.toString()}</span>}
                     </div>
                 ))}
             </div>
@@ -227,17 +227,17 @@ const App = () => {
         let player2Score = JSBI.BigInt(0);
         console.log("initialPrices:", initialPrices);
         console.log("finalPrices:", finalPrices);
-
+        
         player1SelectedFeed.forEach(feed => {
-            console.log("pr1", initialPrices)
+            console.log("pr1",initialPrices)
             const initialPrice = initialPrices[feed].answer;
             const finalPrice = prices[feed].answer
             const change = JSBI.subtract(finalPrice, initialPrice);
             player1Score = JSBI.add(player1Score, change);
         });
-
+        
         player2SelectedFeed.forEach(feed => {
-            console.log("pr2", initialPrices)
+            console.log("pr2",initialPrices)
             const initialPrice = initialPrices[feed].answer;
             const finalPrice = prices[feed].answer
             const change = JSBI.subtract(finalPrice, initialPrice);
@@ -258,7 +258,7 @@ const App = () => {
         <>
             <Toaster position="top-right" reverseOrder={false} />
             <div className="App">
-                <header>Mainnet Price Feeds Selector</header>
+                <header>Chainlink Price Feed Game</header>
                 <div className="container">
                     <FeedSelector
                         player="1"
@@ -285,7 +285,7 @@ const App = () => {
                             min="1"
                         />
                     </label>
-                    <button className="play-button" onClick={() => startGame()} disabled={isPlaying} color={isPlaying ? "grey" : "blue"}>
+                    <button className="play-button" onClick={()=>startGame()} disabled={isPlaying} color={isPlaying ? "grey" : "blue"}>
                         Play
                     </button>
                 </div>
@@ -302,11 +302,6 @@ const App = () => {
 export default App;
 
 
-{/* <div className="result">
-                    <h2>Selected Feeds</h2>
-                    <p>Player 1 Feeds: {player1SelectedFeed.join(", ")}</p>
-                    <p>Player 2 Feeds: {player2SelectedFeed.join(", ")}</p>
-                </div> */}
 
 
 
