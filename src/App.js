@@ -117,9 +117,9 @@ var feedsThatWork = {
 const web3 = new Web3(window.ethereum);
 web3.registerPlugin(new ChainlinkPlugin());
 
-const FeedSelector = ({ player, selectedOptions, setSelectedOptions, _initialPrices, _finalPrices }) => {
-    console.log(_initialPrices)
-    console.log(_finalPrices)
+const FeedSelector = ({ player, selectedOptions, setSelectedOptions, initialPrices, finalPrices }) => {
+    console.log("ini",initialPrices)
+    console.log("fi",finalPrices)
 
     const handleSelectChange = (event) => {
         const value = event.target.value;
@@ -162,10 +162,8 @@ const FeedSelector = ({ player, selectedOptions, setSelectedOptions, _initialPri
                     <div key={option} className="selected-option">
                         <button onClick={() => handleRemoveOption(option)}><span>X</span></button>
                         <span>{option}</span>
-                        {_initialPrices && _initialPrices[option] && <span>${_initialPrices[option]}</span>
-                        }
-                        {_finalPrices && _finalPrices[option] && <span>${_finalPrices[option]}</span>
-                        }
+                        {initialPrices && <span>${initialPrices[option].answer.toString()}</span>}
+                        {finalPrices && <span>${finalPrices[option].answer.toString()}</span>}
                     </div>
                 ))}
             </div>
@@ -176,7 +174,7 @@ const FeedSelector = ({ player, selectedOptions, setSelectedOptions, _initialPri
 const App = () => {
     const [player1SelectedFeed, setPlayer1SelectedFeed] = useState([]);
     const [player2SelectedFeed, setPlayer2SelectedFeed] = useState([]);
-    const [waitingTime, setWaitingTime] = useState(10);
+    const [waitingTime, setWaitingTime] = useState(2);
     const [timer, setTimer] = useState(waitingTime);
     const [initialPrices, setInitialPrices] = useState(null);
     const [finalPrices, setFinalPrices] = useState(null);
@@ -184,19 +182,32 @@ const App = () => {
 
     useEffect(() => {
         if (timer > 0 && isPlaying) {
-            const interval = setInterval(() => setTimer(timer - 1), 1000);
+            const interval = setInterval(() => {
+                setTimer((prevTimer) => prevTimer - 1);
+            }, 1000);
             return () => clearInterval(interval);
-        } else if (timer === 0 && isPlaying) {
+        }
+        else if (timer === 0 && isPlaying) {
+            setTimer(waitingTime);
             fetchFinalPrices();
+            clearImmediate();
         }
     }, [timer, isPlaying]);
+
+    const fetchPrices = async (feeds) => {
+        console.log("feeds:", feeds)
+        const prices = {};
+        for (let feed of feeds) {
+            prices[feed] = await web3.chainlink.getPrice(feedsThatWork[feed]);
+        }
+        return prices;
+    };
 
     const startGame = async () => {
         // TODO: change to 10
         if (player1SelectedFeed.length === 1 && player2SelectedFeed.length === 1) {
             setIsPlaying(true);
             const prices = await fetchPrices([...player1SelectedFeed, ...player2SelectedFeed]);
-            console.log(prices)
             setInitialPrices(prices);
             setTimer(waitingTime);
         } else {
@@ -204,13 +215,6 @@ const App = () => {
         }
     };
 
-    const fetchPrices = async (feeds) => {
-        const prices = {};
-        for (let feed of feeds) {
-            prices[feed] = await web3.chainlink.getPrice(MainnetPriceFeeds[feed]);
-        }
-        return prices;
-    };
 
     const fetchFinalPrices = async () => {
         const prices = await fetchPrices([...player1SelectedFeed, ...player2SelectedFeed]);
@@ -223,22 +227,25 @@ const App = () => {
     const determineWinner = (prices) => {
         let player1Score = JSBI.BigInt(0);
         let player2Score = JSBI.BigInt(0);
-    
+        console.log("initialPrices:", initialPrices);
+        console.log("finalPrices:", finalPrices);
+        
         player1SelectedFeed.forEach(feed => {
-            console.log(initialPrices)
+            console.log("pr1",initialPrices)
             const initialPrice = initialPrices[feed].answer;
             const finalPrice = prices[feed].answer
             const change = JSBI.subtract(finalPrice, initialPrice);
             player1Score = JSBI.add(player1Score, change);
         });
-    
+        
         player2SelectedFeed.forEach(feed => {
+            console.log("pr2",initialPrices)
             const initialPrice = initialPrices[feed].answer;
             const finalPrice = prices[feed].answer
             const change = JSBI.subtract(finalPrice, initialPrice);
             player2Score = JSBI.add(player2Score, change);
         });
-    
+        console.log(player1Score, player2Score)
         if (JSBI.greaterThan(player1Score, player2Score)) {
             toast.success("Player 1 wins!");
         } else if (JSBI.lessThan(player1Score, player2Score)) {
@@ -247,8 +254,8 @@ const App = () => {
             toast.error("It's a draw!");
         }
     };
-    
-    
+
+
     return (
         <>
             <Toaster position="top-right" reverseOrder={false} />
@@ -280,7 +287,7 @@ const App = () => {
                             min="1"
                         />
                     </label>
-                    <button className="play-button" onClick={startGame} disabled={isPlaying} color={isPlaying ? "grey": "blue"}>
+                    <button className="play-button" onClick={()=>startGame()} disabled={isPlaying} color={isPlaying ? "grey" : "blue"}>
                         Play
                     </button>
                 </div>
